@@ -1,95 +1,62 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
 
-export default function Home() {
+import { DynamicWidget } from "@/lib/dynamic";
+import { useState, useEffect } from "react";
+import DynamicMethods from "@/app/components/Methods";
+import { useDarkMode } from "@/lib/useDarkMode";
+import Image from "next/image";
+import "./../src/output.css";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import { cardsData } from "@/data/cards-data";
+
+export default function Main() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="min-h-screen relative">
+      <div className="fixed top-0 left-0 right-0 py-4 px-14 bg-background">
+        <div className="max-w-screen-xl mx-auto flex justify-between items-center">
+          <h1 className="text-4xl text-neutral-800 font-bold">NovaSafe</h1>
+          <DynamicWidget />
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <main className="flex flex-col gap-[32px] items-center p-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <div className="max-w-screen-xl mx-auto">
+          <h1 className="text-2xl text-neutral-800 font-bold">
+            How can we help you?
+          </h1>
+        </div>
+        <div className="flex max-w-screen-xl mx-auto gap-4">
+          {cardsData.map((card) => (
+            <Card
+              key={card.title}
+              className="w-full text-white bg-neutral-800 hover:bg-neutral-700 transition-colors duration-300 gap-2 cursor-pointer"
+            >
+              <CardHeader>
+                <CardTitle className="text-2xl">{card.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{card.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </main>
+      <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-background">
+        <div className="max-w-screen-xl mx-auto">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Ask me anything"
+              className="pr-24"
+            />
+            <Button className="absolute right-1 top-1/2 -translate-y-1/2 h-8 bg-neutral-800 text-white">
+              <ChevronRight className="w-4 h-4 " />
+            </Button>
+          </div>
+        </div>
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
