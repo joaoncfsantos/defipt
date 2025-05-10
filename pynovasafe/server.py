@@ -10,6 +10,8 @@ from flask_cors import CORS
 
 load_dotenv()
 
+global chat_history
+chat_history = []
 api_key = os.getenv("OPENAI_API_KEY")
 openai.api_key = api_key
 
@@ -101,12 +103,10 @@ def home():
 
 @app.route("/chat", methods=["GET"])
 def chat():
-    global chat_history
 
     user_input = request.json.get("user_input")
 
     if not chat_history:
-        # Initialize the chat context only once if history is empty
         chat_history = setup_chat_context()
 
     if user_input:
