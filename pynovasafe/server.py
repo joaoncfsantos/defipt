@@ -99,7 +99,7 @@ def home():
     return "Hello from Flask!"
 
 
-@app.route("/chat", methods=["GET"])
+@app.route("/chat", methods=["POST"])
 def chat():
     global chat_history
 

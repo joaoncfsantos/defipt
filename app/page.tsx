@@ -13,9 +13,42 @@ import { cardsData } from "@/data/cards-data";
 import { Card } from "@/app/components/Card";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { UserInfo } from "./components/UserInfo";
+import Chat from "./components/Chat";
 
 export default function Main() {
   const { primaryWallet } = useDynamicContext();
+
+  const [userInput, setUserInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [response, setResponse] = useState("");
+
+  const handleSendRequest = async () => {
+    if (!userInput.trim()) return;
+
+    setIsSending(true);
+    setResponse("");
+    try {
+      const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_input: userInput,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+      setResponse(data.response);
+      setUserInput("");
+    } catch (error) {
+      console.error("Error sending request:", error);
+      setResponse("Error sending request. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -41,6 +74,8 @@ export default function Main() {
             />
           ))}
         </div>
+        <p>{response}</p>
+        <Chat />
       </main>
       <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-background">
         <div className="max-w-screen-xl mx-auto">
@@ -49,8 +84,19 @@ export default function Main() {
               type="text"
               placeholder="Ask me anything"
               className="pr-24"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSendRequest();
+                }
+              }}
             />
-            <Button className="absolute right-1 top-1/2 -translate-y-1/2 h-8 bg-neutral-800 text-white">
+            <Button
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 bg-neutral-800 text-white"
+              onClick={handleSendRequest}
+              disabled={isSending}
+            >
               <ChevronRight className="w-4 h-4 " />
             </Button>
           </div>
