@@ -6,6 +6,7 @@ from protocols.aave import AaveData
 from protocols.agave import AgaveData
 from flask import Flask, request, jsonify
 from protocols.balancer import BalancerData
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -13,6 +14,8 @@ api_key = os.getenv("OPENAI_API_KEY")
 openai.api_key = api_key
 
 app = Flask(__name__)
+CORS(app)
+
 # Global variable to store the chat history
 chat_history = []
 
@@ -89,6 +92,11 @@ def setup_chat_context():
         },
     ]
     return yau
+
+
+@app.route("/")
+def home():
+    return "Hello from Flask!"
 
 
 @app.route("/chat", methods=["GET"])
