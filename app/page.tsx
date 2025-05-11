@@ -138,9 +138,7 @@ export default function Main() {
           >
             DefiPT
           </h1>
-          <div className="bg-white rounded-lg">
-            <DynamicWidget />
-          </div>
+          <DynamicWidget />
         </div>
       </div>
       <main
