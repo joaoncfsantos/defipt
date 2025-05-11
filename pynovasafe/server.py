@@ -42,6 +42,16 @@ def parse_intent(user_input: str, chat_history: list):
     return full_response, chat_history
 
 
+def parse_wallet_tokens(wallet_tokens: list, tokens_data: dict):
+    res = []
+    for (token,amount) in wallet_tokens:
+        decimals = tokens_data.get(token, {}).get("decimals", 18)
+        amount_converted = float(amount)/(10**float(decimals))
+        res.append({"address": token, "balance": amount_converted})
+    return res
+
+
+
 def setup_chat_context(wallet_address, wallet_tokens):
     balancer_data = BalancerData().setup_data()
     aave_data = AaveData().setup_data()
@@ -110,15 +120,14 @@ def setup_chat_context(wallet_address, wallet_tokens):
                 + str(aave_borrow_pos_data)
             ),
         },
-        # {
-        #     "role": "system",
-        #     "content": (
-        #         "Here is the user's wallet token data. When the user inquires, please analyze this data and recommend the best investment opportunities on the Gnosis chain based on the tokens held."
-        #         + str(wallet_tokens)
-        #     ),
-        # },
+        {
+            "role": "system",
+            "content": (
+                "Here is the user's wallet token data. When the user inquires, please analyze this data and recommend the best investment opportunities on the Gnosis chain based on the tokens held."
+                + str(parse_wallet_tokens(wallet_tokens, tokens_data))
+            ),
+        },
     ]
-    print(aave_borrow_pos_data)
     return setup_chat
 
 
@@ -136,15 +145,13 @@ def reset_chat():
     return jsonify({"message": "Chat history has been reset."})
 
 
-@app.route("/chat", methods=["GET"])
+@app.route("/chat", methods=["POST"])
 def chat():
     global chat_history
 
     user_input = request.json.get("user_input")
     wallet_tokens = request.json.get("wallet_tokens")
     wallet_address = request.json.get("wallet_address")
-
-    print(chat_history)
 
     if not chat_history:
         # Initialize the chat context only once if history is empty
@@ -173,5 +180,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True)
-    main()
+    app.run(debug=True)
+    # main()

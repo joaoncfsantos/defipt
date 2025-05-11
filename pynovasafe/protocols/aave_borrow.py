@@ -76,7 +76,7 @@ class AaveBorrowPositionsData:
             balance_stable = s_contract.functions.balanceOf(self.wallet_address).call()
             if not balance_stable:
                 balance_stable = 0
-            decimals = self.tokens_data.get(reserve, {}).get("decimals", 18)
+            decimals = float(self.tokens_data.get(reserve, {}).get("decimals", 18))
             liq_t = self.get_user_account_data()[3] / 10000
 
             if balance and self.is_being_used_as_collateral(i):
@@ -84,7 +84,7 @@ class AaveBorrowPositionsData:
                     {
                         "type": "supply as collateral",
                         "token": reserve,
-                        "balance": int(balance) / 10**decimals,
+                        "balance": float(balance) / 10**decimals,
                         "supply_apy": supply_apy,
                     }
                 )
@@ -93,7 +93,7 @@ class AaveBorrowPositionsData:
                     {
                         "type": "borrow",
                         "token": reserve,
-                        "balance": (int(balance_variable) + int(balance_stable))
+                        "balance": (float(balance_variable) + float(balance_stable))
                         / 10**decimals,
                         "user_interest_rate": stable_apy + variable_apy,
                         "user_liquidation_threshold": liq_t,

@@ -44,7 +44,7 @@ class AavePositionsData:
         reserves = self.get_reserves_list()
         for i, reserve in enumerate(reserves):
             reserve_data = self.get_reserve_data(reserve)
-            decimals = self.tokens_data.get(reserve, {}).get("decimals", 18)
+            decimals = float(self.tokens_data.get(reserve, {}).get("decimals", 18))
             supply_apy = reserve_data[self.supply_apy_position] / 1e27
             lp_token = reserve_data[8]
             lp_contract = self.w3.eth.contract(address=lp_token, abi=self.get_abi_lps())
@@ -56,7 +56,7 @@ class AavePositionsData:
             user_balances.append(
                 {
                     "token": reserve,
-                    "balance": int(balance) / 10**decimals,
+                    "balance": float(balance) / 10**decimals,
                     "supply_apy": supply_apy,
                 }
             )
