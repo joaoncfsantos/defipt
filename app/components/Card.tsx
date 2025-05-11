@@ -8,11 +8,15 @@ import {
 interface CardProps {
   title: string;
   description: string;
+  onClick: () => void;
 }
 
-export function Card({ title, description }: CardProps) {
+export function Card({ title, description, onClick }: CardProps) {
   return (
-    <UICard className="w-full text-white bg-neutral-800 hover:bg-neutral-700 transition-colors duration-300 gap-2 cursor-pointer">
+    <UICard
+      className="w-full text-white bg-neutral-800 hover:bg-neutral-700 transition-colors duration-300 gap-2 cursor-pointer"
+      onClick={onClick}
+    >
       <CardHeader>
         <CardTitle className="text-2xl">{title}</CardTitle>
       </CardHeader>

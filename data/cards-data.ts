@@ -1,14 +1,16 @@
 export const cardsData = [
   {
-    title: "Borrowing",
-    description: "I want to borrow 5 ETH with 1000 USDC",
+    title: "Suggestion #1",
+    description: "What are the top five highest-yielding pools on Balancer?",
   },
   {
-    title: "Health Ratio",
-    description: "What is my health ratio in my Ethereum position?",
+    title: "Suggestion #2",
+    description:
+      "Is there a yield arbitrage opportunity by borrowing on Aave and farming in a higher-APR liquidity pool? Analyze the data.",
   },
   {
-    title: "Liquidation",
-    description: "What is the liquidation threshold when borrowing wBTC?",
+    title: "Suggestion #3",
+    description:
+      "Analyze the current markets on Gnosis and identify the most profitable opportunities.",
   },
 ];

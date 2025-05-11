@@ -21,9 +21,16 @@ export default function Main() {
   const [userInput, setUserInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [response, setResponse] = useState("");
+  const [chatHistory, setChatHistory] = useState<
+    { role: string; content: string }[]
+  >([]);
 
-  const handleSendRequest = async () => {
+  const handleSendRequest = async (userInput: string) => {
     if (!userInput.trim()) return;
+
+    // Add user message to chat history
+    const userMessage = { role: "user", content: userInput };
+    setChatHistory((prevHistory) => [...prevHistory, userMessage]);
 
     setIsSending(true);
     setResponse("");
@@ -41,6 +48,11 @@ export default function Main() {
       const data = await response.json();
       console.log(data);
       setResponse(data.response);
+
+      // Add assistant response to chat history
+      const assistantMessage = { role: "assistant", content: data.response };
+      setChatHistory((prevHistory) => [...prevHistory, assistantMessage]);
+
       setUserInput("");
     } catch (error) {
       console.error("Error sending request:", error);
@@ -48,6 +60,10 @@ export default function Main() {
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleCardClick = (card: { title: string; description: string }) => {
+    handleSendRequest(card.description);
   };
 
   return (
@@ -63,19 +79,20 @@ export default function Main() {
           <h1 className="text-2xl text-neutral-800 font-bold">
             How can we help you?
           </h1>
-          <UserInfo />
+          {/* <UserInfo /> */}
         </div>
         <div className="flex max-w-screen-xl mx-auto gap-4">
-          {cardsData.map((card) => (
-            <Card
-              key={card.title}
-              title={card.title}
-              description={card.description}
-            />
-          ))}
+          {chatHistory.length === 0 &&
+            cardsData.map((card) => (
+              <Card
+                key={card.title}
+                title={card.title}
+                description={card.description}
+                onClick={() => handleCardClick(card)}
+              />
+            ))}
         </div>
-        <p>{response}</p>
-        <Chat />
+        <Chat chatHistory={chatHistory} />
       </main>
       <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-background">
         <div className="max-w-screen-xl mx-auto">
@@ -88,13 +105,13 @@ export default function Main() {
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  handleSendRequest();
+                  handleSendRequest(userInput);
                 }
               }}
             />
             <Button
               className="absolute right-1 top-1/2 -translate-y-1/2 h-8 bg-neutral-800 text-white"
-              onClick={handleSendRequest}
+              onClick={() => handleSendRequest(userInput)}
               disabled={isSending}
             >
               <ChevronRight className="w-4 h-4 " />
