@@ -139,3 +139,9 @@ Once your Flask server and the frontend is up and running, you can interact with
 * "What are the interest rates for lending on Agave?"
 
 
+## For the Future
+
+* Implement more DeFi protocols to provide a wider range of investment opportunities and analysis.
+* Implement writing functions inside the bot, so the user can execute the on chain transactions directly from the chat interface.
+* If we added more protocols, we needed a new way of scalling the context window of the AI. So using a vector database and devide the data in chuncks of embeddings it is the right direction.
+
