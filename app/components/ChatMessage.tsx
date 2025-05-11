@@ -12,7 +12,7 @@ export default function ChatMessage({
       } max-w-[75%]`}
     >
       <p className="font-semibold mb-2 text-gray-700">
-        {message.role === "user" ? "User" : "Bot"}
+        {message.role === "user" ? "You" : "DefiPT"}
       </p>
       <div className="prose prose-sm max-w-none">
         <ReactMarkdown>{message.content}</ReactMarkdown>
