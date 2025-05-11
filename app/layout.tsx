@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Providers from "@/lib/providers";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={`${inter.className} bg-gradient-to-br from-[#3d6958] to-[#325447] min-h-screen`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

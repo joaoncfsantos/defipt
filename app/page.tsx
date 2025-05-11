@@ -62,45 +62,84 @@ export default function Main() {
     }
   };
 
+  const handleResetChat = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/reset_chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error sending request:", error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   const handleCardClick = (card: { title: string; description: string }) => {
     handleSendRequest(card.description);
   };
 
+  /* const handleRefreshPage = () => {
+    window.location.reload();
+    handleResetChat();
+  }; */
+
   return (
     <div className="min-h-screen relative">
-      <div className="fixed top-0 left-0 right-0 py-4 px-14 bg-background">
+      <div className="fixed top-0 left-0 right-0 py-4 px-14 bg-transparent">
         <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-          <h1 className="text-4xl text-neutral-800 font-bold">NovaSafe</h1>
+          <h1
+            onClick={() => {
+              handleResetChat();
+            }}
+            className="text-4xl text-white font-bold hover:text-gray-200 cursor-pointer"
+          >
+            DefiPT
+          </h1>
           <DynamicWidget />
         </div>
       </div>
       <main className="flex flex-col gap-[32px] items-center p-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <div className="max-w-screen-xl mx-auto">
-          <h1 className="text-2xl text-neutral-800 font-bold">
-            How can we help you?
-          </h1>
-          {/* <UserInfo /> */}
-        </div>
-        <div className="flex max-w-screen-xl mx-auto gap-4">
-          {chatHistory.length === 0 &&
-            cardsData.map((card) => (
-              <Card
-                key={card.title}
-                title={card.title}
-                description={card.description}
-                onClick={() => handleCardClick(card)}
-              />
-            ))}
-        </div>
-        <Chat chatHistory={chatHistory} />
+        {chatHistory.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center pt-20">
+            <div className="flex flex-col gap-8">
+              <div className="max-w-screen-xl mx-auto text-center">
+                <h1 className="text-3xl text-white font-bold">
+                  Your DeFi Personal Trainer 💪
+                </h1>
+                <p className="text-white">
+                  Ask me anything about DeFi, crypto, and blockchain.
+                </p>
+                {/* <UserInfo /> */}
+              </div>
+              <div className="flex max-w-screen-xl mx-auto gap-4">
+                {cardsData.map((card) => (
+                  <Card
+                    key={card.title}
+                    title={card.title}
+                    description={card.description}
+                    onClick={() => handleCardClick(card)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Chat chatHistory={chatHistory} />
+        )}
       </main>
-      <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-background">
+      <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-transparent">
         <div className="max-w-screen-xl mx-auto">
-          <div className="relative">
+          <div className="relative max-w-2xl mx-auto">
             <Input
               type="text"
               placeholder="Ask me anything"
-              className="pr-24"
+              className="pr-24 bg-white h-12"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={(e) => {
@@ -110,11 +149,11 @@ export default function Main() {
               }}
             />
             <Button
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 bg-neutral-800 text-white"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-10 bg-neutral-800 text-white"
               onClick={() => handleSendRequest(userInput)}
               disabled={isSending}
             >
-              <ChevronRight className="w-4 h-4 " />
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
