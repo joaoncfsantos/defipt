@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# DeFiPT - ETH Lisbon 2025 Hackathon Project
+
+Welcome to **DeFiPT**, your personal DeFi Personal Trainer. Our product is an AI-powered chatbot that learns from each user's portfolio to deliver a highly personalised financial experience. It offers tailored investment advice and identifies the most promising opportunities within the Gnosis Chain.
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Features](#features)
+* [Technologies](#technologies)
+* [Getting Started](#getting-started)
+* [Server API Endpoints](#server-api-endpoints)
+* [Usage](#usage)
+
+## Overview
+
+DeFiPT is designed to integrate AI-driven recommendations with real-time data from major DeFi protocols on the Gnosis Chain. It uses **OpenAI's GPT-4 Turbo** to engage with users in a conversational interface, helping them optimize their DeFi portfolio based on their current holdings and user-defined risk parameters.
+
+The platform pulls data from the Gnosis chain from popular DeFi protocols like Aave, Agave, and Balancer, and uses that data to provide personalized suggestions for yield farming, liquidity pools, borrowing, and lending. You can interact with the platform via a chat-based interface to get tailored investment strategies, all while being informed about the risk levels associated with each option.
+
+## Features
+
+* **Wallet Integration**: Connect your Gnosis wallet to fetch real-time data about your holdings and positions (using Dynamic).
+* **Chat-Based Interface**: Easily interact with the AI agent to explore and optimize your DeFi portfolio.
+* **Real-Time Data Integration**: Fetch live data from multiple rpc calls of some DeFi protocols such as Aave, Agave, and Balancer.
+* **Risk-Based Portfolio Optimization**: With risk parameters evaluation. DeFiPT recommend the best investment opportunities.
+* **Yield Strategies**: DeFiPT generates lists of strategies and and opportunities to your portfolio and preferences.
+* **Cross-Protocol Data Integration**: Combines data from multiple DeFi platforms to offer a comprehensive view of the DeFi landscape.
+
+## Technologies
+
+* **Wallet Integration**: Dynamic
+* **Backend Framework**: Python, Flask
+* **AI Integration**: OpenAI GPT-4 Turbo API
+* **Protocols**: The most popular on Gnosis chains: Aave, Agave and  Balancer.
+* **Data**: On-chain Protocol data from Gnosis Chain and for tokens data from GraphQL APIs
+* **Frontend**: Next.js, React
 
 ## Getting Started
 
-First, run the development server:
+To get started with **DeFiPT**, clone this repository and set up the environment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Prerequisites
+
+* Python 3.7+
+* pip
+* An OpenAI API key
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/joaoncfsantos/defipt.git
+   cd defipt
+   ```
+
+3. Create a `.env` file in the root of the project and add your OpenAI API key:
+
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key
+   ```
+
+4. Run the Flask app inside the pynovasafe directory:
+
+   ```bash
+   python server.py
+   ```
+
+   The server will start, and you can make API calls to interact with the chatbot interface.
+
+
+5. Run the Frontend app inside the frontend directory:
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+   The frontend will be available at [http://localhost:3000](http://localhost:3000).
+
+## Server API Endpoints
+
+### `/reset_chat` (POST)
+
+Resets the chat history.
+
+**Request Body**:
+
+```json
+{
+  "message": "Reset chat"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Response**:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```json
+{
+  "message": "Chat history has been reset."
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### `/chat` (POST)
 
-## Learn More
+Send a user query and receive a response from the AI agent. This query can be used to interact with your DeFi portfolio and ask for recommendations.
 
-To learn more about Next.js, take a look at the following resources:
+**Query Parameters**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* `user_input`: The input provided by the user (e.g., "Optimize my portfolio for low risk").
+* `wallet_address`: The user's Gnosis wallet address.
+* `wallet_tokens`: The list of tokens in the user's wallet.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+**Example Request**:
 
-## Deploy on Vercel
+```json
+{
+  "user_input": "What are the best yield strategies for my portfolio?",
+  "wallet_address": "0xYourWalletAddress",
+  "wallet_tokens": {"token1": 100, "token2": 50}
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Response**:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```json
+{
+  "response": "Based on your current portfolio, I recommend the following yield strategies..."
+}
+```
+
+## Usage
+
+Once your Flask server and the frontend is up and running, you can interact with DeFiPT through the chatbot interface to ask for personalized DeFi recommendations. Here are a few things you can ask DeFiPT:
+
+* "Accordingly to my wallet holdings, what are the best investments that I can do?"
+* "Tell me my AAVE supply positions."
+* "Optimize my portfolio for low risk."
+* "What are the interest rates for lending on Agave?"
+
+
