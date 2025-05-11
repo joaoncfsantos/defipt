@@ -11,12 +11,19 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { cardsData } from "@/data/cards-data";
 import { Card } from "@/app/components/Card";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  useDynamicContext,
+  useTokenBalances,
+} from "@dynamic-labs/sdk-react-core";
 import { UserInfo } from "./components/UserInfo";
 import Chat from "./components/Chat";
 
+type TokenBalanceTuple = [string, string]; // [address, rawBalance]
+
 export default function Main() {
   const { primaryWallet } = useDynamicContext();
+
+  const { tokenBalances, isLoading, isError, error } = useTokenBalances();
 
   const [userInput, setUserInput] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -24,6 +31,17 @@ export default function Main() {
   const [chatHistory, setChatHistory] = useState<
     { role: string; content: string }[]
   >([]);
+  const [userTokens, setUserTokens] = useState<TokenBalanceTuple[]>([]);
+
+  useEffect(() => {
+    if (tokenBalances) {
+      const tokens: TokenBalanceTuple[] = tokenBalances.map((token) => [
+        token.address,
+        token.rawBalance.toString(),
+      ]);
+      setUserTokens(tokens);
+    }
+  }, [tokenBalances]);
 
   const handleSendRequest = async (userInput: string) => {
     if (!userInput.trim()) return;
@@ -42,6 +60,7 @@ export default function Main() {
         },
         body: JSON.stringify({
           user_input: userInput,
+          tokens: userTokens,
         }),
       });
 
@@ -69,6 +88,9 @@ export default function Main() {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          tokens: userTokens,
+        }),
       });
 
       const data = await response.json();
@@ -115,7 +137,6 @@ export default function Main() {
                 <p className="text-white">
                   Ask me anything about DeFi, crypto, and blockchain.
                 </p>
-                {/* <UserInfo /> */}
               </div>
               <div className="flex max-w-screen-xl mx-auto gap-4">
                 {cardsData.map((card) => (
