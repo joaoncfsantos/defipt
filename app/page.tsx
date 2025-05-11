@@ -157,6 +157,16 @@ export default function Main() {
             </Button>
           </div>
         </div>
+        <div className="flex items-center justify-center gap-1 mt-2">
+          <p className="text-white text-sm">Powered by</p>
+          <Image
+            src="/gnosis.svg"
+            alt="logo"
+            width={96}
+            height={96}
+            className="brightness-0 invert"
+          />
+        </div>
       </div>
     </div>
   );
