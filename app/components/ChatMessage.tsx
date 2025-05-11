@@ -8,7 +8,7 @@ export default function ChatMessage({
   return (
     <div
       className={`p-4 rounded-lg ${
-        message.role === "user" ? "bg-blue-50 ml-auto" : "bg-gray-50 mr-auto"
+        message.role === "user" ? "bg-green-50 ml-auto" : "bg-gray-50 mr-auto"
       } max-w-[75%]`}
     >
       <p className="font-semibold mb-2 text-gray-700">

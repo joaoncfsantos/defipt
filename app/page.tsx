@@ -22,27 +22,32 @@ type TokenBalanceTuple = [string, string]; // [address, rawBalance]
 
 export default function Main() {
   const { primaryWallet } = useDynamicContext();
-
   const { tokenBalances, isLoading, isError, error } = useTokenBalances();
-
+  const [userTokens, setUserTokens] = useState<TokenBalanceTuple[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [response, setResponse] = useState("");
   const [chatHistory, setChatHistory] = useState<
     { role: string; content: string }[]
   >([]);
-  const [userTokens, setUserTokens] = useState<TokenBalanceTuple[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (tokenBalances) {
+    if (primaryWallet) {
+      console.log("Wallet connected:", primaryWallet);
+    }
+  }, [primaryWallet]);
+
+  useEffect(() => {
+    if (tokenBalances && primaryWallet) {
       const tokens: TokenBalanceTuple[] = tokenBalances.map((token) => [
         token.address,
         token.rawBalance.toString(),
       ]);
       setUserTokens(tokens);
+      console.log("Token balances updated:", tokens);
     }
-  }, [tokenBalances]);
+  }, [tokenBalances, primaryWallet]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -68,7 +73,8 @@ export default function Main() {
         },
         body: JSON.stringify({
           user_input: userInput,
-          tokens: userTokens,
+          wallet_address: primaryWallet?.address,
+          wallet_tokens: userTokens,
         }),
       });
 
@@ -97,6 +103,7 @@ export default function Main() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          user_address: primaryWallet?.address,
           tokens: userTokens,
         }),
       });
@@ -131,7 +138,9 @@ export default function Main() {
           >
             DefiPT
           </h1>
-          <DynamicWidget />
+          <div className="bg-white rounded-lg">
+            <DynamicWidget />
+          </div>
         </div>
       </div>
       <main
@@ -173,7 +182,9 @@ export default function Main() {
             <Input
               type="text"
               placeholder="Ask me anything"
-              className="pr-24 bg-white h-12"
+              className={`pr-24 bg-white h-12 ${
+                isSending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={(e) => {
@@ -181,13 +192,18 @@ export default function Main() {
                   handleSendRequest(userInput);
                 }
               }}
+              disabled={isSending}
             />
             <Button
               className="absolute right-1 top-1/2 -translate-y-1/2 h-10 bg-neutral-800 text-white"
               onClick={() => handleSendRequest(userInput)}
               disabled={isSending}
             >
-              <ChevronRight className="w-4 h-4" />
+              {isSending ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
             </Button>
           </div>
         </div>
