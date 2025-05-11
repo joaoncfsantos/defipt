@@ -65,5 +65,4 @@ class BalancerData:
                     "type": pool["type"],
                 }
             )
-        print(len(selected_pools), "pools selected")
         return selected_pools

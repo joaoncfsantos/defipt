@@ -23,5 +23,9 @@ class Tokens:
             )
             if not price:
                 continue
-            results[token["address"]] = {"symbol": token["symbol"], "price": price}
+            results[token["address"]] = {
+                "symbol": token["symbol"],
+                "price": price,
+                "decimals": token["decimals"],
+            }
         return results

@@ -10,7 +10,7 @@ class TokensMetaData:
     }
 
     payload = {
-        "query": "{tokenGetTokens(chains: [GNOSIS]) {address symbol}}",
+        "query": "{tokenGetTokens(chains: [GNOSIS]) {address symbol decimals}}",
     }
 
     def setup_data(self):

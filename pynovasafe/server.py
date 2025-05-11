@@ -1,6 +1,8 @@
 import os
 import openai
 from dotenv import load_dotenv
+from protocols.aave_positions import AavePositionsData
+from protocols.aave_borrow import AaveBorrowPositionsData
 from tokens.tokens import Tokens
 from protocols.aave import AaveData
 from protocols.agave import AgaveData
@@ -40,12 +42,16 @@ def parse_intent(user_input: str, chat_history: list):
     return full_response, chat_history
 
 
-def setup_chat_context():
+def setup_chat_context(wallet_address, wallet_tokens):
     balancer_data = BalancerData().setup_data()
     aave_data = AaveData().setup_data()
     agave_data = AgaveData().setup_data()
     tokens_data = Tokens().get_tokens_data()
-    yau = [
+    aave_pos_data = AavePositionsData(wallet_address, tokens_data).get_user_positions()
+    aave_borrow_pos_data = AaveBorrowPositionsData(
+        wallet_address, tokens_data
+    ).get_user_positions()
+    setup_chat = [
         {
             "role": "system",
             "content": (
@@ -90,8 +96,30 @@ def setup_chat_context():
                 + str(agave_data)
             ),
         },
+        {
+            "role": "system",
+            "content": (
+                "These are the supply positions the user added to Aave without marking them as collateral:\n"
+                + str(aave_pos_data)
+            ),
+        },
+        {
+            "role": "system",
+            "content": (
+                "This is the borrow and lending market position of the user. The list can contain the assets given as collateral and assets borrowed. Interpret the position data and when ask analyse about the risk of the position (Do not forget when showing the balances you need to account and remove the token decimals):\n"
+                + str(aave_borrow_pos_data)
+            ),
+        },
+        # {
+        #     "role": "system",
+        #     "content": (
+        #         "Here is the user's wallet token data. When the user inquires, please analyze this data and recommend the best investment opportunities on the Gnosis chain based on the tokens held."
+        #         + str(wallet_tokens)
+        #     ),
+        # },
     ]
-    return yau
+    print(aave_borrow_pos_data)
+    return setup_chat
 
 
 @app.route("/")
@@ -99,15 +127,28 @@ def home():
     return "Hello from Flask!"
 
 
-@app.route("/chat", methods=["POST"])
+@app.route("/reset_chat", methods=["POST"])
+def reset_chat():
+    global chat_history
+
+    chat_history = []  # Reset the chat history
+
+    return jsonify({"message": "Chat history has been reset."})
+
+
+@app.route("/chat", methods=["GET"])
 def chat():
     global chat_history
 
     user_input = request.json.get("user_input")
+    wallet_tokens = request.json.get("wallet_tokens")
+    wallet_address = request.json.get("wallet_address")
+
+    print(chat_history)
 
     if not chat_history:
         # Initialize the chat context only once if history is empty
-        chat_history = setup_chat_context()
+        chat_history = setup_chat_context(wallet_address, wallet_tokens)
 
     if user_input:
         # Process the user input with current chat history
@@ -120,15 +161,17 @@ def chat():
 
 
 def main():
-    chat_history = setup_chat_context()
+    chat_history = setup_chat_context(
+        "0x77984Dc88AaB3D9c843256d7AaBDc82540c94F69", None
+    )
     while True:
         user_prompt = input("You: ")
         if user_prompt.lower() in {"exit", "quit"}:
             break
-        args, chat_history = parse_intent(user_prompt, chat_history)
-        print("Parsed arguments:", args)
+        response, chat_history = parse_intent(user_prompt, chat_history)
+        print(response)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    # main()
+    # app.run(debug=True)
+    main()
