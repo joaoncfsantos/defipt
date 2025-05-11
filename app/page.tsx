@@ -1,7 +1,7 @@
 "use client";
 
 import { DynamicWidget } from "@/lib/dynamic";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DynamicMethods from "@/app/components/Methods";
 import { useDarkMode } from "@/lib/useDarkMode";
 import Image from "next/image";
@@ -32,6 +32,7 @@ export default function Main() {
     { role: string; content: string }[]
   >([]);
   const [userTokens, setUserTokens] = useState<TokenBalanceTuple[]>([]);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (tokenBalances) {
@@ -42,6 +43,13 @@ export default function Main() {
       setUserTokens(tokens);
     }
   }, [tokenBalances]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleSendRequest = async (userInput: string) => {
     if (!userInput.trim()) return;
@@ -126,33 +134,38 @@ export default function Main() {
           <DynamicWidget />
         </div>
       </div>
-      <main className="flex flex-col gap-[32px] items-center p-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        {chatHistory.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center pt-20">
-            <div className="flex flex-col gap-8">
-              <div className="max-w-screen-xl mx-auto text-center">
-                <h1 className="text-3xl text-white font-bold">
-                  Your DeFi Personal Trainer 💪
-                </h1>
-                <p className="text-white">
-                  Ask me anything about DeFi, crypto, and blockchain.
-                </p>
-              </div>
-              <div className="flex max-w-screen-xl mx-auto gap-4">
-                {cardsData.map((card) => (
-                  <Card
-                    key={card.title}
-                    title={card.title}
-                    description={card.description}
-                    onClick={() => handleCardClick(card)}
-                  />
-                ))}
+      <main
+        ref={chatContainerRef}
+        className="fixed top-24 bottom-40 left-0 right-0 overflow-y-auto scrollbar-hide"
+      >
+        <div className="flex flex-col gap-[32px] items-center p-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+          {chatHistory.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex flex-col gap-8">
+                <div className="max-w-screen-xl mx-auto text-center">
+                  <h1 className="text-3xl text-white font-bold">
+                    Your DeFi Personal Trainer 💪
+                  </h1>
+                  <p className="text-white">
+                    Ask me anything about DeFi, crypto, and blockchain.
+                  </p>
+                </div>
+                <div className="flex max-w-screen-xl mx-auto gap-4">
+                  {cardsData.map((card) => (
+                    <Card
+                      key={card.title}
+                      title={card.title}
+                      description={card.description}
+                      onClick={() => handleCardClick(card)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <Chat chatHistory={chatHistory} />
-        )}
+          ) : (
+            <Chat chatHistory={chatHistory} />
+          )}
+        </div>
       </main>
       <div className="fixed bottom-12 left-0 right-0 py-4 px-14 bg-transparent">
         <div className="max-w-screen-xl mx-auto">
